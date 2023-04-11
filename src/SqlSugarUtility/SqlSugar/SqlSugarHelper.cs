@@ -105,7 +105,7 @@ namespace SqlSugar
                 MoreSettings = new ConnMoreSettings
                 {
                     TableEnumIsString = tableEnumIsString, //枚举以字符串的方式存储
-                    SqlServerCodeFirstNvarchar = true
+                    SqlServerCodeFirstNvarchar = dbType == DbType.SqlServer
                 }
             };
             var configAction = (SqlSugarClient db) =>
