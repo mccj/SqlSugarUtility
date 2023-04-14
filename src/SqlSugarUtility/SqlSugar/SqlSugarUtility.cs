@@ -13,15 +13,18 @@ namespace SqlSugar
         /// <param name="dbType"></param>
         /// <param name="connectionString"></param>
         /// <returns></returns>
-        public static ISqlSugarClient GetSingletonSqlSugarClient(DbType dbType, string connectionString, bool tableEnumIsString = true) => GetSqlSugarClient(false, dbType, connectionString, tableEnumIsString);
+        public static ISqlSugarClient GetSingletonSqlSugarClient(DbType dbType, string connectionString, bool tableEnumIsString = true) => GetSingletonSqlSugarClient<IgnoreAttribute>(dbType, connectionString, tableEnumIsString);
+        public static ISqlSugarClient GetSingletonSqlSugarClient<IgnoreT>(DbType dbType, string connectionString, bool tableEnumIsString = true) where IgnoreT : Attribute => GetSqlSugarClient<IgnoreT>(false, dbType, connectionString, tableEnumIsString);
         /// <summary>
         /// Scope 模式
         /// </summary>
         /// <param name="dbType"></param>
         /// <param name="connectionString"></param>
         /// <returns></returns>
-        public static ISqlSugarClient GetScopeSqlSugarClient(DbType dbType, string connectionString, bool tableEnumIsString = true) => GetSqlSugarClient(true, dbType, connectionString, tableEnumIsString);
-        public static ISqlSugarClient GetSqlSugarClient(bool scope, DbType dbType, string connectionString, bool tableEnumIsString = true)
+        public static ISqlSugarClient GetScopeSqlSugarClient(DbType dbType, string connectionString, bool tableEnumIsString = true) => GetScopeSqlSugarClient<IgnoreAttribute>(dbType, connectionString, tableEnumIsString);
+        public static ISqlSugarClient GetScopeSqlSugarClient<IgnoreT>(DbType dbType, string connectionString, bool tableEnumIsString = true) where IgnoreT : Attribute => GetSqlSugarClient<IgnoreT>(true, dbType, connectionString, tableEnumIsString);
+        public static ISqlSugarClient GetSqlSugarClient(bool scope, DbType dbType, string connectionString, bool tableEnumIsString = true) => GetSqlSugarClient<IgnoreAttribute>(scope, dbType, connectionString, tableEnumIsString);
+        public static ISqlSugarClient GetSqlSugarClient<IgnoreT>(bool scope, DbType dbType, string connectionString, bool tableEnumIsString = true) where IgnoreT : Attribute
         {
             var connectionConfig = new ConnectionConfig
             {
@@ -56,7 +59,7 @@ namespace SqlSugar
                             column.IsNullable = true;
                         }
                         //忽略属性
-                        if (sugarColumn?.IsIgnore != false && (property.GetCustomAttribute<IgnoreAttribute>() != null))
+                        if (sugarColumn?.IsIgnore != false && (property.GetCustomAttribute<IgnoreT>() != null))
                         {
                             column.IsIgnore = true;
                         }
