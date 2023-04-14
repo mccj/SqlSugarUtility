@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace SqlSugar
 {
-    public static class SqlSugarHelper
+    public static class SqlSugarUtility
     {
         /// <summary>
         /// 单例模式
