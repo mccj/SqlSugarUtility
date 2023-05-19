@@ -122,7 +122,7 @@ public static class SqlSugarUtility
                 //Console.WriteLine(sql);//输出sql,查看执行sql 性能无影响
 
                 //5.0.8.2 获取无参数化 SQL  对性能有影响，特别大的SQL参数多的，调试使用
-                var sql2 = UtilMethods.GetSqlString(dbType, sql, pars);
+                var sql2 = UtilMethods.GetSqlString(db.CurrentConnectionConfig.DbType, sql, pars);
                 Console.WriteLine(sql2);//输出sql,查看执行sql 性能无影响
                 System.Diagnostics.Debug.WriteLine(sql2);
 #endif
