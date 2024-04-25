@@ -1,0 +1,22 @@
+<Project>
+	<PropertyGroup>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<AnalysisLevel>6.0-all</AnalysisLevel>
+
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageProjectUrl>https://github.com/mccj/SqlSugarUtility</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/mccj/SqlSugarUtility.git</RepositoryUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+</Project>
