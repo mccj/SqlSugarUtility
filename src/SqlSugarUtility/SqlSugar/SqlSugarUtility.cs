@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
+using SqlSugar.DbConvert;
+
 namespace SqlSugar;
 
 public static class SqlSugarUtility
@@ -73,7 +75,8 @@ public static class SqlSugarUtility
                     if (tableEnumIsString && (property.PropertyType.IsEnum || (property.PropertyType.IsGenericType && property.PropertyType.GenericTypeArguments.FirstOrDefault().IsEnum)))
                     {
                         column.DataType = "varchar";
-                        column.Length = Enum.GetNames(property.PropertyType.IsGenericType ? property.PropertyType.GenericTypeArguments.FirstOrDefault() : property.PropertyType).Max(f => f.Length);
+                        column.SqlParameterDbType = typeof(EnumToStringConvert);
+                        column.Length = Enum.GetNames(property.PropertyType.IsGenericType ? property.PropertyType.GenericTypeArguments.FirstOrDefault() : property.PropertyType).Max(f => f.Length) + 2;
                     }
 
                     if (sugarColumn?.IsPrimaryKey == null && column.PropertyName.ToLower() == "id") //是id的设为主键
@@ -100,8 +103,12 @@ public static class SqlSugarUtility
                     //p.IsDisabledUpdateAll = true;//禁止更新+删除
                     p.IsDisabledDelete = true;//禁止删除列
 
-                    var description = x.GetCustomAttribute<TableAttribute>(true)?.Name ?? x.GetCustomAttribute<DescriptionAttribute>(true)?.Description;
+                    var description = x.GetCustomAttribute<DescriptionAttribute>(true)?.Description;
                     if (description != null) p.TableDescription = description;
+
+                    var tableName = x.GetCustomAttribute<TableAttribute>(true)?.Name;
+                    if (tableName != null) p.DbTableName = tableName;
+
                     //p.DbTableName = UtilMethods.ToUnderLine(p.DbTableName);//ToUnderLine驼峰转下划线方法
                 }
             },
