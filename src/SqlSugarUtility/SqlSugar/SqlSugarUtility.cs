@@ -3,12 +3,29 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
-using SqlSugar.DbConvert;
+using Yitter.IdGenerator;
 
 namespace SqlSugar;
 
 public static class SqlSugarUtility
 {
+    static SqlSugarUtility()
+    {
+        SetIdGenerator(new IdGeneratorOptions
+        {
+            WorkerId = 1,
+            WorkerIdBitLength = 6, // 机器码位长 默认值6，取值范围 [1, 19]
+            SeqBitLength = 6 // 序列数位长 默认值6，取值范围 [3, 21]（建议不小于4，值越大性能越高、Id位数也更长）
+        });
+    }
+    public static void SetIdGenerator(IdGeneratorOptions snowIdOpt)
+    {
+        YitIdHelper.SetIdGenerator(snowIdOpt);
+        SnowFlakeSingle.WorkId = snowIdOpt?.WorkerId ?? 1;
+
+        // 自定义 SqlSugar 雪花ID算法
+        StaticConfig.CustomSnowFlakeFunc = YitIdHelper.NextId;
+    }
     /// <summary>
     /// 单例模式
     /// </summary>
@@ -75,7 +92,7 @@ public static class SqlSugarUtility
                     if (tableEnumIsString && (property.PropertyType.IsEnum || (property.PropertyType.IsGenericType && property.PropertyType.GenericTypeArguments.FirstOrDefault().IsEnum)))
                     {
                         column.DataType = "varchar";
-                        column.SqlParameterDbType = typeof(EnumToStringConvert);
+                        //column.SqlParameterDbType = typeof(EnumToStringConvert);
                         column.Length = Enum.GetNames(property.PropertyType.IsGenericType ? property.PropertyType.GenericTypeArguments.FirstOrDefault() : property.PropertyType).Max(f => f.Length) + 2;
                     }
 

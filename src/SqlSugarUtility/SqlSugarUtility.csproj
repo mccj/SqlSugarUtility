@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net48;netstandard2.1</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>12.0</LangVersion>
 		<Nullable>enable</Nullable>
-		<Version>1.0.5</Version>
+		<Version>1.0.7</Version>
 	</PropertyGroup>
 
 	<Import Project="NugetPackage.props" />
@@ -13,6 +13,8 @@
 	<ItemGroup>
 		<PackageReference Include="SqlSugarCore" Version="*" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
 		<PackageReference Include="SqlSugar" Version="*" Condition="'$(TargetFramework)' == 'net48'" />
+		<PackageReference Include="Yitter.IdGenerator" Version="1.0.14" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
+		<PackageReference Include="Yitter.IdGenerator.Net45" Version="*" Condition="'$(TargetFramework)' == 'net48'" />
 		<PackageReference Include="System.ComponentModel.Annotations" Version="*" />
 	</ItemGroup>
 </Project>
