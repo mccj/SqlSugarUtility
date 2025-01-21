@@ -33,7 +33,10 @@ public static class SqlSugarUtility
     /// <param name="connectionString"></param>
     /// <returns></returns>
     public static ISqlSugarClient GetSingletonSqlSugarClient(DbType dbType, string connectionString, bool tableEnumIsString = true, Action<SqlSugarClient>? configAction = null) => GetSingletonSqlSugarClient<IgnoreAttribute>(dbType, connectionString, tableEnumIsString, configAction);
+    public static ISqlSugarClient GetSingletonSqlSugarClient(DbType dbType, string connectionString, Action<ConnMoreSettings> moreSettings, Action<SqlSugarClient>? configAction = null) => GetSingletonSqlSugarClient<IgnoreAttribute>(dbType, connectionString, moreSettings, configAction);
+
     public static ISqlSugarClient GetSingletonSqlSugarClient<IgnoreT>(DbType dbType, string connectionString, bool tableEnumIsString = true, Action<SqlSugarClient>? configAction = null) where IgnoreT : Attribute => GetSqlSugarClient<IgnoreT>(false, dbType, connectionString, tableEnumIsString, configAction);
+    public static ISqlSugarClient GetSingletonSqlSugarClient<IgnoreT>(DbType dbType, string connectionString, Action<ConnMoreSettings> moreSettings, Action<SqlSugarClient>? configAction = null) where IgnoreT : Attribute => GetSqlSugarClient<IgnoreT>(false, dbType, connectionString, moreSettings, configAction);
     /// <summary>
     /// Scope 模式
     /// </summary>
@@ -41,9 +44,33 @@ public static class SqlSugarUtility
     /// <param name="connectionString"></param>
     /// <returns></returns>
     public static ISqlSugarClient GetScopeSqlSugarClient(DbType dbType, string connectionString, bool tableEnumIsString = true, Action<SqlSugarClient>? configAction = null) => GetScopeSqlSugarClient<IgnoreAttribute>(dbType, connectionString, tableEnumIsString, configAction);
+    public static ISqlSugarClient GetScopeSqlSugarClient(DbType dbType, string connectionString, Action<ConnMoreSettings> moreSettings, Action<SqlSugarClient>? configAction = null) => GetScopeSqlSugarClient<IgnoreAttribute>(dbType, connectionString, moreSettings, configAction);
+
     public static ISqlSugarClient GetScopeSqlSugarClient<IgnoreT>(DbType dbType, string connectionString, bool tableEnumIsString = true, Action<SqlSugarClient>? configAction = null) where IgnoreT : Attribute => GetSqlSugarClient<IgnoreT>(true, dbType, connectionString, tableEnumIsString, configAction);
+    public static ISqlSugarClient GetScopeSqlSugarClient<IgnoreT>(DbType dbType, string connectionString, Action<ConnMoreSettings> moreSettings, Action<SqlSugarClient>? configAction = null) where IgnoreT : Attribute => GetSqlSugarClient<IgnoreT>(true, dbType, connectionString, moreSettings, configAction);
+
     public static ISqlSugarClient GetSqlSugarClient(bool scope, DbType dbType, string connectionString, bool tableEnumIsString = true, Action<SqlSugarClient>? configAction = null) => GetSqlSugarClient<IgnoreAttribute>(scope, dbType, connectionString, tableEnumIsString, configAction);
+
+    //public static ISqlSugarClient GetSqlSugarClient<IgnoreT>(bool scope, DbType dbType, string connectionString, bool tableEnumIsString = true, DbType? databaseModel = null, Action<SqlSugarClient>? configAction = null) where IgnoreT : Attribute
     public static ISqlSugarClient GetSqlSugarClient<IgnoreT>(bool scope, DbType dbType, string connectionString, bool tableEnumIsString = true, Action<SqlSugarClient>? configAction = null) where IgnoreT : Attribute
+    {
+        var _moreSettings = new ConnMoreSettings
+        {
+            SqlServerCodeFirstNvarchar = dbType == DbType.SqlServer,
+            TableEnumIsString = tableEnumIsString//枚举以字符串的方式存储
+        };
+        return GetSqlSugarClient<IgnoreT>(scope, dbType, connectionString, _moreSettings, configAction);
+    }
+    public static ISqlSugarClient GetSqlSugarClient<IgnoreT>(bool scope, DbType dbType, string connectionString, Action<ConnMoreSettings> moreSettings, Action<SqlSugarClient>? configAction = null) where IgnoreT : Attribute
+    {
+        var _moreSettings = new ConnMoreSettings
+        {
+            SqlServerCodeFirstNvarchar = dbType == DbType.SqlServer
+        };
+        moreSettings?.Invoke(_moreSettings);
+        return GetSqlSugarClient<IgnoreT>(scope, dbType, connectionString, _moreSettings, configAction);
+    }
+    public static ISqlSugarClient GetSqlSugarClient<IgnoreT>(bool scope, DbType dbType, string connectionString, ConnMoreSettings moreSettings, Action<SqlSugarClient>? configAction = null) where IgnoreT : Attribute
     {
         var connectionConfig = new ConnectionConfig
         {
@@ -86,10 +113,11 @@ public static class SqlSugarUtility
                     if (sugarColumn?.DecimalDigits == null && (property.PropertyType == typeof(decimal) || (property.PropertyType.IsGenericType && property.PropertyType.GenericTypeArguments.FirstOrDefault() == typeof(decimal))))
                     {
                         column.DecimalDigits = 4;
+                        column.Length = 18;
                     }
 
                     // 枚举
-                    if (tableEnumIsString && (property.PropertyType.IsEnum || (property.PropertyType.IsGenericType && property.PropertyType.GenericTypeArguments.FirstOrDefault().IsEnum)))
+                    if (moreSettings.TableEnumIsString == true && (property.PropertyType.IsEnum || (property.PropertyType.IsGenericType && property.PropertyType.GenericTypeArguments.FirstOrDefault().IsEnum)))
                     {
                         column.DataType = "varchar";
                         //column.SqlParameterDbType = typeof(EnumToStringConvert);
@@ -129,11 +157,7 @@ public static class SqlSugarUtility
                     //p.DbTableName = UtilMethods.ToUnderLine(p.DbTableName);//ToUnderLine驼峰转下划线方法
                 }
             },
-            MoreSettings = new ConnMoreSettings
-            {
-                TableEnumIsString = tableEnumIsString, //枚举以字符串的方式存储
-                SqlServerCodeFirstNvarchar = dbType == DbType.SqlServer
-            }
+            MoreSettings = moreSettings
         };
 
         var defaultConfigAction = (SqlSugarClient db) =>
@@ -143,12 +167,12 @@ public static class SqlSugarUtility
              db.Aop.OnLogExecuting = (sql, pars) =>
              {
 #if DEBUG
-                //Console.WriteLine(sql);//输出sql,查看执行sql 性能无影响
+                 //Console.WriteLine(sql);//输出sql,查看执行sql 性能无影响
 
-                //5.0.8.2 获取无参数化 SQL  对性能有影响，特别大的SQL参数多的，调试使用
-                var sql2 = UtilMethods.GetSqlString(db.CurrentConnectionConfig.DbType, sql, pars);
-                Console.WriteLine(sql2);//输出sql,查看执行sql 性能无影响
-                System.Diagnostics.Debug.WriteLine(sql2);
+                 //5.0.8.2 获取无参数化 SQL  对性能有影响，特别大的SQL参数多的，调试使用
+                 var sql2 = UtilMethods.GetSqlString(db.CurrentConnectionConfig.DbType, sql, pars);
+                 Console.WriteLine(sql2);//输出sql,查看执行sql 性能无影响
+                 System.Diagnostics.Debug.WriteLine(sql2);
 #endif
              };
              db.Aop.OnError = (ex) =>

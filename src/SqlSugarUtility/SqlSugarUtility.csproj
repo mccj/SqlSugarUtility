@@ -13,7 +13,7 @@
 	<ItemGroup>
 		<PackageReference Include="SqlSugarCore" Version="*" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
 		<PackageReference Include="SqlSugar" Version="*" Condition="'$(TargetFramework)' == 'net48'" />
-		<PackageReference Include="Yitter.IdGenerator" Version="1.0.14" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
+		<PackageReference Include="Yitter.IdGenerator" Version="*" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
 		<PackageReference Include="Yitter.IdGenerator.Net45" Version="*" Condition="'$(TargetFramework)' == 'net48'" />
 		<PackageReference Include="System.ComponentModel.Annotations" Version="*" />
 	</ItemGroup>
