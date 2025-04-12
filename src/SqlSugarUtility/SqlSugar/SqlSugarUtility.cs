@@ -88,7 +88,7 @@ public static class SqlSugarUtility
                     if (!string.IsNullOrWhiteSpace(description)) column.ColumnDescription = description;
 
                     var defaultValue = sugarColumn?.DefaultValue ?? property.GetCustomAttribute<DefaultValueAttribute>(true)?.Value?.ToString();
-                    if (!string.IsNullOrWhiteSpace(defaultValue)) column.DefaultValue = defaultValue?.ToSqlValue();
+                    if (!string.IsNullOrWhiteSpace(defaultValue)) column.DefaultValue = defaultValue;//?.ToSqlValue();
 
                     var stringLength = sugarColumn?.Length ?? property.GetCustomAttribute<StringLengthAttribute>(true)?.MaximumLength;
                     if (stringLength.HasValue) column.Length = stringLength.Value;
