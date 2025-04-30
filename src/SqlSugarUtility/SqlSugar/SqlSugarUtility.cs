@@ -83,17 +83,28 @@ public static class SqlSugarUtility
                 EntityService = (property, column) =>
                 {
                     var sugarColumn = property.GetCustomAttribute<SugarColumn>();
-                    var description = sugarColumn?.ColumnDescription ?? property.GetCustomAttribute<DisplayNameAttribute>(true)?.DisplayName ?? property.GetCustomAttribute<DescriptionAttribute>(true)?.Description;
+                    //忽略属性
+                    if (sugarColumn?.IsIgnore != false && (property.GetCustomAttribute<IgnoreAttribute>() != null))
+                    {
+                        column.IsIgnore = true;
+                    }
 
+                    // 描述
+                    var description = sugarColumn?.ColumnDescription ?? property.GetCustomAttribute<DescriptionAttribute>(true)?.Description;
                     if (!string.IsNullOrWhiteSpace(description)) column.ColumnDescription = description;
 
+                    // 字段名称
+                    var columnName = sugarColumn?.ColumnName ?? property.GetCustomAttribute<DisplayNameAttribute>(true)?.DisplayName;
+                    if (!string.IsNullOrWhiteSpace(columnName)) column.DbColumnName = columnName;
+                    //p.DbColumnName = UtilMethods.ToUnderLine(p.DbColumnName);//ToUnderLine驼峰转下划线方法
+
+                    // 默认值
                     var defaultValue = sugarColumn?.DefaultValue ?? property.GetCustomAttribute<DefaultValueAttribute>(true)?.Value?.ToString();
                     if (!string.IsNullOrWhiteSpace(defaultValue)) column.DefaultValue = defaultValue;//?.ToSqlValue();
 
+                    //字段长度
                     var stringLength = sugarColumn?.Length ?? property.GetCustomAttribute<StringLengthAttribute>(true)?.MaximumLength;
                     if (stringLength.HasValue) column.Length = stringLength.Value;
-
-                    //p.DbColumnName = UtilMethods.ToUnderLine(p.DbColumnName);//ToUnderLine驼峰转下划线方法
 
                     // int?  decimal?这种 isnullable=true 不支持string
                     if (sugarColumn?.IsNullable != false && property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -104,27 +115,24 @@ public static class SqlSugarUtility
                     {//高版C#写法 支持string?和string  
                         column.IsNullable = true;
                     }
-                    //忽略属性
-                    if (sugarColumn?.IsIgnore != false && (property.GetCustomAttribute<IgnoreT>() != null))
-                    {
-                        column.IsIgnore = true;
-                    }
 
+                    // 货币数字类型 默认精度
                     if (sugarColumn?.DecimalDigits == null && (property.PropertyType == typeof(decimal) || (property.PropertyType.IsGenericType && property.PropertyType.GenericTypeArguments.FirstOrDefault() == typeof(decimal))))
                     {
                         column.DecimalDigits = 4;
                         column.Length = 18;
                     }
 
-                    // 枚举
-                    if (moreSettings.TableEnumIsString == true && (property.PropertyType.IsEnum || (property.PropertyType.IsGenericType && property.PropertyType.GenericTypeArguments.FirstOrDefault().IsEnum)))
+                    // 枚举字符串存储处理
+                    if (property.GetCustomAttributes<EnumColumnAttribute>(true).Any() && /*moreSettings.TableEnumIsString == true && */(property.PropertyType.IsEnum || (property.PropertyType.IsGenericType && property.PropertyType.GenericTypeArguments.FirstOrDefault().IsEnum)))
                     {
                         column.DataType = "varchar";
-                        //column.SqlParameterDbType = typeof(EnumToStringConvert);
+                        column.SqlParameterDbType = typeof(SqlSugar.DbConvert.EnumToStringConvert);
                         column.Length = Enum.GetNames(property.PropertyType.IsGenericType ? property.PropertyType.GenericTypeArguments.FirstOrDefault() : property.PropertyType).Max(f => f.Length) + 2;
                     }
 
-                    if (sugarColumn?.IsPrimaryKey == null && column.PropertyName.ToLower() == "id") //是id的设为主键
+                    // 默认主键处理
+                    if (sugarColumn?.IsPrimaryKey == null && (column.PropertyName.ToLower() == "id") || (property.GetCustomAttribute<KeyAttribute>(true) != null)) //是id的设为主键
                     {
                         column.IsNullable = false;
                         column.IsPrimarykey = true;
@@ -133,15 +141,51 @@ public static class SqlSugarUtility
                             column.IsIdentity = true;
                         }
                     }
-                    else if (sugarColumn?.IsPrimaryKey == null && property.GetCustomAttribute<KeyAttribute>(true) != null)
+
+                    //自增长属性
+                    if (sugarColumn?.IsIdentity != false && (property.GetCustomAttribute<IdentityAttribute>() != null))
                     {
-                        column.IsNullable = false;
-                        column.IsPrimarykey = true;
-                        if (column.PropertyInfo.PropertyType == typeof(int)) //是id并且是int的是自增
-                        {
-                            column.IsIdentity = true;
-                        }
+                        column.IsIdentity = true;
                     }
+
+                    //忽略添加
+                    if (sugarColumn?.IsOnlyIgnoreInsert != false && (property.GetCustomAttribute<OnlyIgnoreInsertAttribute>() != null))
+                    {
+                        column.IsOnlyIgnoreInsert = true;
+                    }
+
+                    //忽略更新
+                    if (sugarColumn?.IsOnlyIgnoreUpdate != false && (property.GetCustomAttribute<OnlyIgnoreUpdateAttribute>() != null))
+                    {
+                        column.IsOnlyIgnoreUpdate = true;
+                    }
+
+                    //标识版本字段
+                    if (sugarColumn?.IsEnableUpdateVersionValidation != false && (property.GetCustomAttribute<EnableUpdateVersionValidationAttribute>() != null))
+                    {
+                        column.IsEnableUpdateVersionValidation = true;
+                    }
+
+                    //树形主键
+                    if (sugarColumn?.IsTreeKey != false && (property.GetCustomAttribute<TreeKeyAttribute>() != null))
+                    {
+                        column.IsTreeKey = true;
+                    }
+
+                    //json类型
+                    if (sugarColumn?.IsJson != false && (property.GetCustomAttribute<JsonAttribute>() != null))
+                    {
+                        column.IsJson = true;
+                        column.IsNullable = true;
+                    }
+
+                    if (sugarColumn?.IsTranscoding != false && (property.GetCustomAttribute<TranscodingAttribute>() != null))
+                    {
+                        column.IsTranscoding = true;
+                    }
+
+                    var sqlParameterDbType = sugarColumn?.SqlParameterDbType as Type ?? property.GetCustomAttribute<SqlParameterDbTypeAttribute>(true)?.DbType;
+                    if (sqlParameterDbType != null) column.SqlParameterDbType = sqlParameterDbType;
                 },
                 EntityNameService = (x, p) => //处理表名
                 {
@@ -230,3 +274,25 @@ public static class SqlSugarUtility
     }
 }
 public class IgnoreAttribute : Attribute { }
+public class EnumColumnAttribute : Attribute { }
+public class IdentityAttribute : Attribute { }
+public class OnlyIgnoreInsertAttribute : Attribute { }
+public class OnlyIgnoreUpdateAttribute : Attribute { }
+/// <summary>
+/// 标识版本字段
+/// </summary>
+public class EnableUpdateVersionValidationAttribute : Attribute { }
+public class TreeKeyAttribute : Attribute { }
+public class JsonAttribute : Attribute { }
+public class TranscodingAttribute : Attribute { }
+/// <summary>
+/// 自定义类型处理
+/// </summary>
+public class SqlParameterDbTypeAttribute : Attribute
+{
+    public SqlParameterDbTypeAttribute(Type dbType)
+    {
+        DbType = dbType;
+    }
+    public Type DbType { get; }
+}
