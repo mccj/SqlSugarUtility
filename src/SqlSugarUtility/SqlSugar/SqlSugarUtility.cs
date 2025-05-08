@@ -132,7 +132,7 @@ public static class SqlSugarUtility
                     }
 
                     // 默认主键处理
-                    if (sugarColumn?.IsPrimaryKey == null && (column.PropertyName.ToLower() == "id") || (property.GetCustomAttribute<KeyAttribute>(true) != null)) //是id的设为主键
+                    if (sugarColumn?.IsPrimaryKey != true && (column.PropertyName?.ToLower() == "id" || property.GetCustomAttribute<KeyAttribute>(true) != null)) //是id的设为主键
                     {
                         column.IsNullable = false;
                         column.IsPrimarykey = true;
