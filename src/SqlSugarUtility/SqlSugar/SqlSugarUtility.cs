@@ -127,7 +127,7 @@ public static class SqlSugarUtility
                     if (property.GetCustomAttributes<EnumColumnAttribute>(true).Any() && /*moreSettings.TableEnumIsString == true && */(property.PropertyType.IsEnum || (property.PropertyType.IsGenericType && property.PropertyType.GenericTypeArguments.FirstOrDefault().IsEnum)))
                     {
                         column.DataType = "varchar";
-                        column.SqlParameterDbType = typeof(SqlSugar.DbConvert.EnumToStringConvert);
+                        //column.SqlParameterDbType = typeof(SqlSugar.DbConvert.EnumToStringConvert);
                         column.Length = Enum.GetNames(property.PropertyType.IsGenericType ? property.PropertyType.GenericTypeArguments.FirstOrDefault() : property.PropertyType).Max(f => f.Length) + 2;
                     }
 
