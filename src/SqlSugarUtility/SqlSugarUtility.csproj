@@ -3,9 +3,11 @@
 	<PropertyGroup>
 		<TargetFrameworks>net48;netstandard2.1</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<LangVersion>12.0</LangVersion>
+		<LangVersion>14.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<Version>1.0.7</Version>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<WarningLevel>8</WarningLevel>
 	</PropertyGroup>
 
 	<Import Project="NugetPackage.props" />

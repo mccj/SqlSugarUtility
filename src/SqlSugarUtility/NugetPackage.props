@@ -5,12 +5,41 @@
 		<AnalysisLevel>6.0-all</AnalysisLevel>
 
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<!-- 指向项目主页的URL，通常是 GitHub 地址 -->
 		<PackageProjectUrl>https://github.com/mccj/SqlSugarUtility</PackageProjectUrl>
+		<!-- 指向源代码仓库的URL，用于源代码链接 -->
 		<RepositoryUrl>https://github.com/mccj/SqlSugarUtility.git</RepositoryUrl>
+		<!-- 包的 readme 文件，如有请提供 -->
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-
+		<!-- 是否需要生成符号包，通常为 true -->
 		<IncludeSymbols>True</IncludeSymbols>
+		<!-- 符号包格式，建议使用 snupkg -->
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<!-- 作者信息 -->
+		<Authors>mccj</Authors>
+		<!-- 版权信息 -->
+		<Copyright>Copyright © mccj 2024</Copyright>
+		<!-- 包的标题，简洁明了 -->
+		<Title>SqlSugar Utility Extensions</Title>
+		<!-- 包的详细描述，展示在 NuGet 详情页 -->
+		<Description>A powerful extension toolkit for SqlSugar ORM. Provides a flexible client factory with easy configuration (singleton/scope), integrates Yitter SnowFlake ID generator, and offers rich extension methods for SimpleClient and ISugarQueryable. Simplifies common data access patterns like paging, array conversion, and attribute-based entity mapping.</Description>
+		<!-- 包的版本号，请根据实际情况填写 -->
+		<!--<PackageVersion>1.0.0</PackageVersion>-->
+		<!-- 标签，用空格或分号分隔，有助于在 NuGet 上被搜索到 -->
+		<PackageTags>sqlsugar; orm; extension; utility; pagination; snowflake; id-generator; data-access; .net; database</PackageTags>
+		<!-- 发行说明：描述此版本的新功能、修复和改进 -->
+		<PackageReleaseNotes>## v1.0.0
+- 🚀 **SqlSugar Client Factory**: Simplified creation of SqlSugarScope and SqlSugarClient with built-in attribute mapping (Description, DefaultValue, Key, etc.).
+- ❄️ **SnowFlake ID Integration**: Customizable SnowFlake ID generator (Yitter) configured by default.
+- 🔧 **Convenience Extensions**: Added paging, counting, and array conversion methods for `SimpleClient` and `ISugarQueryable` (e.g., `ToPageList`, `ForEachByPage`, `GetArray`).
+- 🧩 **Attribute Support**: Automatic recognition of common .NET attributes for database schema definition.</PackageReleaseNotes>
+
+		<!-- 包的许可证类型和文件，建议使用表达式或文件 -->
+		<!--<PackageLicenseExpression>MIT</PackageLicenseExpression>-->
+		<!-- 包的图标文件，如有请提供 -->
+		<!-- <PackageIcon>icon.png</PackageIcon> -->
+		<!-- 包的唯一ID，通常是项目名称 -->
+		<!--<PackageId>SqlSugarUtility</PackageId>-->
 	</PropertyGroup>
 
 	<ItemGroup>
