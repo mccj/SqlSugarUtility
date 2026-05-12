@@ -4,8 +4,8 @@
 /// 用于标记实体属性在数据库映射中应被忽略。
 /// 当属性同时标记了 [Ignore] 且未显式设置 SugarColumn.IsIgnore = false 时，该属性将不会映射为数据表列。
 /// </summary>
-[AttributeUsage(AttributeTargets.Property)]
-public sealed class IgnorePropertyAttribute : Attribute { }
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
+public sealed class IgnoreAttribute : Attribute { }
 
 /// <summary>
 /// 标记枚举类型属性应以字符串形式存储于数据库。

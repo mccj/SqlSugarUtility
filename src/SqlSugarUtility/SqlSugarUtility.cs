@@ -46,7 +46,7 @@ public static class SqlSugarUtility
     /// <param name="tableEnumIsString">是否将枚举类型映射为字符串（默认 true）。</param>
     /// <param name="configAction">可选的客户端配置委托，用于设置 AOP 等。</param>
     /// <returns>ISqlSugarClient 实例（单例模式）。</returns>
-    public static ISqlSugarClient GetSingletonSqlSugarClient(DbType dbType, string connectionString, bool tableEnumIsString = true, Action<SqlSugarClient>? configAction = null) => GetSingletonSqlSugarClient<IgnorePropertyAttribute>(dbType, connectionString, tableEnumIsString, configAction);
+    public static ISqlSugarClient GetSingletonSqlSugarClient(DbType dbType, string connectionString, bool tableEnumIsString = true, Action<SqlSugarClient>? configAction = null) => GetSingletonSqlSugarClient<IgnoreAttribute>(dbType, connectionString, tableEnumIsString, configAction);
 
     /// <summary>
     /// 获取单例模式的 SqlSugar 客户端（SqlSugarScope），并允许对 MoreSettings 进行额外配置。
@@ -56,7 +56,7 @@ public static class SqlSugarUtility
     /// <param name="moreSettings">对 ConnMoreSettings 的配置委托。</param>
     /// <param name="configAction">可选的客户端配置委托，用于设置 AOP 等。</param>
     /// <returns>ISqlSugarClient 实例（单例模式）。</returns>
-    public static ISqlSugarClient GetSingletonSqlSugarClient(DbType dbType, string connectionString, Action<ConnMoreSettings> moreSettings, Action<SqlSugarClient>? configAction = null) => GetSingletonSqlSugarClient<IgnorePropertyAttribute>(dbType, connectionString, moreSettings, configAction);
+    public static ISqlSugarClient GetSingletonSqlSugarClient(DbType dbType, string connectionString, Action<ConnMoreSettings> moreSettings, Action<SqlSugarClient>? configAction = null) => GetSingletonSqlSugarClient<IgnoreAttribute>(dbType, connectionString, moreSettings, configAction);
 
     /// <summary>
     /// 获取单例模式的 SqlSugar 客户端（SqlSugarScope），并支持自定义忽略属性标记类型。
@@ -88,7 +88,7 @@ public static class SqlSugarUtility
     /// <param name="tableEnumIsString">是否将枚举类型映射为字符串（默认 true）。</param>
     /// <param name="configAction">可选的客户端配置委托，用于设置 AOP 等。</param>
     /// <returns>ISqlSugarClient 实例（作用域模式）。</returns>
-    public static ISqlSugarClient GetScopeSqlSugarClient(DbType dbType, string connectionString, bool tableEnumIsString = true, Action<SqlSugarClient>? configAction = null) => GetScopeSqlSugarClient<IgnorePropertyAttribute>(dbType, connectionString, tableEnumIsString, configAction);
+    public static ISqlSugarClient GetScopeSqlSugarClient(DbType dbType, string connectionString, bool tableEnumIsString = true, Action<SqlSugarClient>? configAction = null) => GetScopeSqlSugarClient<IgnoreAttribute>(dbType, connectionString, tableEnumIsString, configAction);
 
     /// <summary>
     /// 获取作用域（Scope）模式的 SqlSugar 客户端（SqlSugarClient），并允许对 MoreSettings 进行额外配置。
@@ -98,7 +98,7 @@ public static class SqlSugarUtility
     /// <param name="moreSettings">对 ConnMoreSettings 的配置委托。</param>
     /// <param name="configAction">可选的客户端配置委托，用于设置 AOP 等。</param>
     /// <returns>ISqlSugarClient 实例（作用域模式）。</returns>
-    public static ISqlSugarClient GetScopeSqlSugarClient(DbType dbType, string connectionString, Action<ConnMoreSettings> moreSettings, Action<SqlSugarClient>? configAction = null) => GetScopeSqlSugarClient<IgnorePropertyAttribute>(dbType, connectionString, moreSettings, configAction);
+    public static ISqlSugarClient GetScopeSqlSugarClient(DbType dbType, string connectionString, Action<ConnMoreSettings> moreSettings, Action<SqlSugarClient>? configAction = null) => GetScopeSqlSugarClient<IgnoreAttribute>(dbType, connectionString, moreSettings, configAction);
 
     /// <summary>
     /// 获取作用域（Scope）模式的 SqlSugar 客户端（SqlSugarClient），支持自定义忽略属性标记类型。
@@ -131,7 +131,7 @@ public static class SqlSugarUtility
     /// <param name="tableEnumIsString">是否将枚举类型映射为字符串（默认 true）。</param>
     /// <param name="configAction">可选的客户端配置委托，用于设置 AOP 等。</param>
     /// <returns>ISqlSugarClient 实例。</returns>
-    public static ISqlSugarClient GetSqlSugarClient(bool scope, DbType dbType, string connectionString, bool tableEnumIsString = true, Action<SqlSugarClient>? configAction = null) => GetSqlSugarClient<IgnorePropertyAttribute>(scope, dbType, connectionString, tableEnumIsString, configAction);
+    public static ISqlSugarClient GetSqlSugarClient(bool scope, DbType dbType, string connectionString, bool tableEnumIsString = true, Action<SqlSugarClient>? configAction = null) => GetSqlSugarClient<IgnoreAttribute>(scope, dbType, connectionString, tableEnumIsString, configAction);
 
     /// <summary>
     /// 获取 SqlSugar 客户端（内部核心创建方法），支持自定义忽略属性标记类型，并自动设置默认的 MoreSettings。
