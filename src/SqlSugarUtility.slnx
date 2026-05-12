@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/解决方案项/">
+    <File Path="../.github/workflows/build.yml" />
     <File Path="NugetPackage.props" />
   </Folder>
   <Project Path="SqlSugarUtility.Extensions/SqlSugarUtility.Extensions.csproj" />
