@@ -10,7 +10,7 @@
 		<WarningLevel>8</WarningLevel>
 	</PropertyGroup>
 
-	<Import Project="NugetPackage.props" />
+	<Import Project="../NugetPackage.props" />
 
 	<ItemGroup>
 		<PackageReference Include="SqlSugarCore" Version="*" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
