@@ -11,13 +11,15 @@ on:
 
 # 构建过程中可用的环境变量（供后续步骤或脚本使用）
 env:
-  SHA: ${{ GITHUB.SHA }}
-  REF: ${{ GITHUB.REF }}
-  RUN_ID: ${{ GITHUB.RUN_ID }}
-  RUN_NUMBER: ${{ GITHUB.RUN_NUMBER }}
-  BUILD_RUN_NUMBER: build.${{ GITHUB.RUN_NUMBER }}
-  GITHUB_TOKEN: ${{ SECRETS.GITHUB_TOKEN }}
-  COVERALLS_REPO_TOKEN: ${{ SECRETS.COVERALLS_REPO_TOKEN }}
+  SHA: ${{ github.sha }}
+  REF: ${{ github.ref }}
+  RUN_ID: ${{ github.run_id }}
+  RUN_NUMBER: ${{ github.run_number }}
+  BUILD_RUN_NUMBER: build.${{ github.run_number }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+  # 根目录无 .sln；从引用主库的扩展项目还原/构建即可连带构建 SqlSugarUtility
+  MAIN_PROJECT: src/
 
 jobs:
   # job 的键名须为 ASCII；中文显示名通过 name 指定
@@ -34,6 +36,6 @@ jobs:
     - name: 查看 .NET 环境信息
       run: dotnet --info
     - name: 还原依赖
-      run: dotnet restore
+      run: dotnet restore "${{ env.MAIN_PROJECT }}"
     - name: 编译
-      run: dotnet build --no-restore
+      run: dotnet build "${{ env.MAIN_PROJECT }}" --configuration Release --no-restore
