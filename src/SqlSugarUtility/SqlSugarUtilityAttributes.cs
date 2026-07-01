@@ -2,8 +2,12 @@
 
 /// <summary>
 /// 用于标记实体属性在数据库映射中应被忽略。
-/// 当属性同时标记了 [Ignore] 且未显式设置 SugarColumn.IsIgnore = false 时，该属性将不会映射为数据表列。
 /// </summary>
+/// <remarks>
+/// 当属性标记了 <see cref="IgnoreAttribute"/> 且未在 <see cref="SugarColumn"/> 中显式设置
+/// <c>IsIgnore = false</c> 时，该属性不会映射为数据表列。
+/// 可通过 <c>GetSingletonSqlSugarClient&lt;TIgnore&gt;</c> 的泛型参数替换为自定义忽略特性。
+/// </remarks>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
 public sealed class IgnoreAttribute : Attribute { }
 

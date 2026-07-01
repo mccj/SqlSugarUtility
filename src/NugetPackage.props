@@ -19,20 +19,13 @@
 		<Authors>mccj</Authors>
 		<!-- 版权信息 -->
 		<Copyright>Copyright © mccj 2024</Copyright>
-		<!-- 包的标题，简洁明了 -->
-		<Title>SqlSugar Utility Extensions</Title>
-		<!-- 包的详细描述，展示在 NuGet 详情页 -->
-		<Description>A powerful extension toolkit for SqlSugar ORM. Provides a flexible client factory with easy configuration (singleton/scope), integrates Yitter SnowFlake ID generator, and offers rich extension methods for SimpleClient and ISugarQueryable. Simplifies common data access patterns like paging, array conversion, and attribute-based entity mapping.</Description>
+		<!-- 各项目的 Title / Description 在对应 .csproj 中覆盖 -->
 		<!-- 包的版本号，请根据实际情况填写 -->
 		<!--<PackageVersion>1.0.0</PackageVersion>-->
 		<!-- 标签，用空格或分号分隔，有助于在 NuGet 上被搜索到 -->
 		<PackageTags>sqlsugar; orm; extension; utility; pagination; snowflake; id-generator; data-access; .net; database</PackageTags>
 		<!-- 发行说明：描述此版本的新功能、修复和改进 -->
-		<PackageReleaseNotes>## v1.0.0
-- 🚀 **SqlSugar Client Factory**: Simplified creation of SqlSugarScope and SqlSugarClient with built-in attribute mapping (Description, DefaultValue, Key, etc.).
-- ❄️ **SnowFlake ID Integration**: Customizable SnowFlake ID generator (Yitter) configured by default.
-- 🔧 **Convenience Extensions**: Added paging, counting, and array conversion methods for `SimpleClient` and `ISugarQueryable` (e.g., `ToPageList`, `ForEachByPage`, `GetArray`).
-- 🧩 **Attribute Support**: Automatic recognition of common .NET attributes for database schema definition.</PackageReleaseNotes>
+		<PackageReleaseNotes>详见 https://github.com/mccj/SqlSugarUtility/blob/main/README.md</PackageReleaseNotes>
 
 		<!-- 包的许可证类型和文件，建议使用表达式或文件 -->
 		<!--<PackageLicenseExpression>MIT</PackageLicenseExpression>-->

@@ -8,13 +8,16 @@
 		<Version>1.0.7</Version>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<WarningLevel>8</WarningLevel>
+		<Title>SqlSugar Utility</Title>
+		<Description>SqlSugar 客户端工厂与实体特性映射工具。提供单例/作用域客户端创建、Yitter 雪花 ID 集成，以及基于 .NET 标准特性（Table、Key、Description 等）的 Code First 列映射。</Description>
+		<PackageTags>sqlsugar; orm; utility; snowflake; id-generator; code-first; entity-mapping; .net</PackageTags>
 	</PropertyGroup>
 
 	<Import Project="../NugetPackage.props" />
 
 	<ItemGroup>
-		<PackageReference Include="SqlSugarCore" Version="*" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
-		<PackageReference Include="SqlSugar" Version="*" Condition="'$(TargetFramework)' == 'net48'" />
+		<PackageReference Include="SqlSugarCore" Version="*" PrivateAssets="all" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
+		<PackageReference Include="SqlSugar" Version="*" PrivateAssets="all" Condition="'$(TargetFramework)' == 'net48'" />
 		<PackageReference Include="Yitter.IdGenerator" Version="*" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
 		<PackageReference Include="Yitter.IdGenerator.Net45" Version="*" Condition="'$(TargetFramework)' == 'net48'" />
 		<PackageReference Include="System.ComponentModel.Annotations" Version="*" />

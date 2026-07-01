@@ -3,11 +3,20 @@
 
 name: .NET 构建
 
-# 在推送到 main 或针对 main 的 PR 时触发
+permissions:
+  contents: read
+
+# 同一引用来源只保留最新一次运行，节省分钟数
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+# 推送 main、任意 PR、手动运行
 on:
   push:
     branches: [ "main" ]
   pull_request:
+  workflow_dispatch:
 
 # 构建过程中可用的环境变量（供后续步骤或脚本使用）
 env:
@@ -16,10 +25,11 @@ env:
   RUN_ID: ${{ github.run_id }}
   RUN_NUMBER: ${{ github.run_number }}
   BUILD_RUN_NUMBER: build.${{ github.run_number }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
   # 根目录无 .sln；从引用主库的扩展项目还原/构建即可连带构建 SqlSugarUtility
-  MAIN_PROJECT: src/
+  MAIN_PROJECT: src/SqlSugarUtility.Extensions/SqlSugarUtility.Extensions.csproj
+  BUILD_CONFIGURATION: Release
 
 jobs:
   # job 的键名须为 ASCII；中文显示名通过 name 指定
@@ -29,13 +39,32 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
     - name: 安装 .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+        cache: true
+        cache-dependency-path: src/**/*.csproj
+
     - name: 查看 .NET 环境信息
       run: dotnet --info
+
     - name: 还原依赖
       run: dotnet restore "${{ env.MAIN_PROJECT }}"
+
     - name: 编译
-      run: dotnet build "${{ env.MAIN_PROJECT }}" --configuration Release --no-restore
+      run: >
+        dotnet build "${{ env.MAIN_PROJECT }}"
+        --configuration ${{ env.BUILD_CONFIGURATION }}
+        --no-restore
+        --warnaserror
+
+    - name: 上传 NuGet 包产物
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-packages-${{ github.run_number }}
+        path: |
+          src/**/bin/${{ env.BUILD_CONFIGURATION }}/*.nupkg
+          src/**/bin/${{ env.BUILD_CONFIGURATION }}/*.snupkg
+        if-no-files-found: warn

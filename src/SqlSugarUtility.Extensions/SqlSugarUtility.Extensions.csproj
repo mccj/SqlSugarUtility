@@ -8,12 +8,17 @@
 		<Version>1.0.7</Version>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<WarningLevel>8</WarningLevel>
+		<Title>SqlSugar Utility Extensions</Title>
+		<Description>SqlSugar 查询与数据访问扩展。提供 SqlSugarPagedList 分页封装、SimpleClient 计数/数组便捷方法，以及 ISugarQueryable 分页遍历与 DataTable/JSON 输出包装。</Description>
+		<PackageTags>sqlsugar; orm; extension; pagination; paged-list; simpleclient; data-access; .net</PackageTags>
 	</PropertyGroup>
 
 	<Import Project="../NugetPackage.props" />
 
 	<ItemGroup>
-	  <ProjectReference Include="..\SqlSugarUtility\SqlSugarUtility.csproj" />
+		<PackageReference Include="SqlSugarCore" Version="*" PrivateAssets="all" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
+		<PackageReference Include="SqlSugar" Version="*" PrivateAssets="all" Condition="'$(TargetFramework)' == 'net48'" />
+		<ProjectReference Include="..\SqlSugarUtility\SqlSugarUtility.csproj" />
 	</ItemGroup>
 
 </Project>
